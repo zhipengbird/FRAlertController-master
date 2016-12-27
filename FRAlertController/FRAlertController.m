@@ -476,18 +476,20 @@
 
 #pragma mark - textField delegate
 - (void)textFieldDidBeginEditing:(UITextField *)textField {
+    
+    CGSize screenSize = [UIScreen mainScreen].bounds.size;
     //弹出键盘后需要立即修改textField的位置
     CGFloat alertViewH = CGRectGetHeight(self.alertView.frame);
-    CGFloat alertViewMaxY = CGRectGetMaxY(self.alertView.frame);
+    //alertView居中时最大的Y值
+    CGFloat alertViewMaxY = (screenSize.height + alertViewH) * 0.5;
     CGFloat textFieldMaxY = CGRectGetMaxY(textField.frame);
     //textField距底部的高度
-    CGFloat textFieldBottomDistance = self.view.bounds.size.height - alertViewMaxY + alertViewH - textFieldMaxY;
+    CGFloat textFieldBottomDistance = screenSize.height - alertViewMaxY + alertViewH - textFieldMaxY;
     /**  键盘高度
     5.5吋271
     4.7吋258
     4.0吋253
      */
-    CGSize screenSize = [UIScreen mainScreen].bounds.size;
     CGFloat keyboardHeight;
     // 如果是iPhone
     if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
@@ -518,12 +520,42 @@
     }
     //textFiled距键盘高度,如果小于20上移textFiled背景
     CGFloat distance = textFieldBottomDistance - keyboardHeight;
-    if (distance < 0) {//需要移动textFiled的背景视图
+    if (distance < 10) {//需要移动textFiled的背景视图
         //需要移动键盘的距离
         CGFloat moveDistance = 10 - distance;
         NSLog(@"%f",moveDistance);
+        NSArray* constrains = self.view.constraints;
+        
+        for (NSLayoutConstraint* constraint in constrains) {
+            NSLog(@"%@",constraint.secondItem);
+            if (constraint.firstItem == self.alertView){
+                if (constraint.firstAttribute == NSLayoutAttributeCenterY) {
+                    constraint.constant = - moveDistance;
+                    [UIView animateWithDuration:0.1 animations:^{
+                        [self.view layoutIfNeeded];
+                    }];
+                }
+            }
+        }
     }
+}
+
+- (void)textFieldDidEndEditing:(UITextField *)textField {
+    //移动键盘到原来的位置
+    NSArray* constrains = self.view.constraints;
     
+    for (NSLayoutConstraint* constraint in constrains) {
+        NSLog(@"%@",constraint.secondItem);
+        if (constraint.firstItem == self.alertView){
+            if (constraint.firstAttribute == NSLayoutAttributeCenterY) {
+                constraint.constant = 0;
+                [UIView animateWithDuration:0.1 animations:^{
+                    [self.view layoutIfNeeded];
+                }];
+            }
+        }
+    }
+
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {

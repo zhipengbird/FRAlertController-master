@@ -197,6 +197,18 @@
                 textField.placeholder = @"密文现实的密码";
                 textField.secureTextEntry = YES;
             }];
+            [alertController addTextFieldConfigurationHandler:^(UITextField * _Nonnull textField) {
+                
+                textField.placeholder = @"移动的textFiled";
+            }];
+            [alertController addTextFieldConfigurationHandler:^(UITextField * _Nonnull textField) {
+                
+                textField.placeholder = @"移动的textFiled";
+            }];
+            [alertController addTextFieldConfigurationHandler:^(UITextField * _Nonnull textField) {
+                
+                textField.placeholder = @"移动的textFiled";
+            }];
             FRAlertAction *makesureAction = [FRAlertAction actionWithTitle:@"确定" style:FRAlertActionStyleBorder color:[self randomColor] handler:^(FRAlertAction * _Nonnull action) {
                 NSLog(@"%s",__func__);
             }];
