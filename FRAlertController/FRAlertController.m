@@ -475,11 +475,64 @@
 }
 
 #pragma mark - textField delegate
+- (void)textFieldDidBeginEditing:(UITextField *)textField {
+    //弹出键盘后需要立即修改textField的位置
+    CGFloat alertViewH = CGRectGetHeight(self.alertView.frame);
+    CGFloat alertViewMaxY = CGRectGetMaxY(self.alertView.frame);
+    CGFloat textFieldMaxY = CGRectGetMaxY(textField.frame);
+    //textField距底部的高度
+    CGFloat textFieldBottomDistance = self.view.bounds.size.height - alertViewMaxY + alertViewH - textFieldMaxY;
+    /**  键盘高度
+    5.5吋271
+    4.7吋258
+    4.0吋253
+     */
+    CGSize screenSize = [UIScreen mainScreen].bounds.size;
+    CGFloat keyboardHeight;
+    // 如果是iPhone
+    if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+        // 竖屏情况
+        if (screenSize.height > screenSize.width) {
+            if (screenSize.height == 568) {//4.0"
+                keyboardHeight = 253;
+            }else if (screenSize.height == 667) {//4.7"
+                keyboardHeight = 258;
+            }else if (screenSize.height == 736) {//5.5"
+                keyboardHeight = 271;
+            }else {//3.5"
+                keyboardHeight = 253;
+            }
+        }
+        // 横屏情况
+        if (screenSize.width > screenSize.height) {
+            if (screenSize.width == 568) {//4.0"
+                keyboardHeight = 253;
+            }else if (screenSize.width == 667) {//4.7"
+                keyboardHeight = 258;
+            }else if (screenSize.width == 736) {//5.5"
+                keyboardHeight = 271;
+            }else {//3.5"
+                keyboardHeight = 253;
+            }
+        }
+    }
+    //textFiled距键盘高度,如果小于20上移textFiled背景
+    CGFloat distance = textFieldBottomDistance - keyboardHeight;
+    if (distance < 0) {//需要移动textFiled的背景视图
+        //需要移动键盘的距离
+        CGFloat moveDistance = 10 - distance;
+        NSLog(@"%f",moveDistance);
+    }
+    
+}
+
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
     [textField resignFirstResponder];
     
     return YES;
 }
+
+
 
 
 #pragma mark - 数据处理
