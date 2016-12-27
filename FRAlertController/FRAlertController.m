@@ -39,6 +39,8 @@
 
 @property (nonatomic, copy) FRAlertArrayBlock alertArrayBlock;
 
+@property (nonatomic, copy) FRAlertPassWardBlock passWardBlock;
+
 @end
 
 @implementation FRAlertController
@@ -273,6 +275,12 @@
     [self setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
     
     self.alertArrayBlock = configurationHandler;
+}
+
+
+- (void)addPassWardWithPayMoney:(nonnull NSString *)payMoney configurationHandler:(nonnull FRAlertPassWardBlock)configurationHandler {
+    
+    self.passWardBlock = configurationHandler;
 }
 
 /** 点击按钮事件 */
@@ -519,9 +527,9 @@
     }
     //textFiled距键盘高度,如果小于20上移textFiled背景
     CGFloat distance = textFieldBottomDistance - keyboardHeight;
-    if (distance < 10) {//需要移动textFiled的背景视图
+    if (distance < 20) {//需要移动textFiled的背景视图
         //需要移动键盘的距离
-        CGFloat moveDistance = 10 - distance;
+        CGFloat moveDistance = 20 - distance;
         NSArray* constrains = self.view.constraints;
         
         for (NSLayoutConstraint* constraint in constrains) {

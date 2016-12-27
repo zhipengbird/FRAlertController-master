@@ -21,6 +21,7 @@ typedef NS_ENUM(NSInteger, FRAlertControllerStyle) {
 typedef void (^ FRAlertDatePickerBlock)(UIDatePicker *__nonnull datePicker);
 typedef void(^ FRAlertTextFieldBlock)(UITextField *__nonnull textField);
 typedef void (^ FRAlertArrayBlock)(NSInteger row);
+typedef void(^FRAlertPassWardBlock)(NSString *__nonnull passWord);
 
 @interface FRAlertController : UIViewController
 
@@ -30,16 +31,17 @@ typedef void (^ FRAlertArrayBlock)(NSInteger row);
 
 @property (nonatomic, readonly) FRAlertControllerStyle preferredStyle;
 
+#pragma mark - 按钮
 - (void)addAction:(nonnull FRAlertAction *)action;
 
 @property (nonatomic, readonly, nullable) NSArray<FRAlertAction *> *actions;
 
-
+#pragma mark - TextField
 - (void)addTextFieldConfigurationHandler:(nonnull FRAlertTextFieldBlock)configurationHandler;
 
 @property (nullable, nonatomic, readonly) NSArray<UITextField *> *textFields;
 
-
+#pragma mark - DatePicker
 /**
  添加日期选择器(默认选中日期为今天  最小日期默认为1900/01/01  最大日期默认为当前日期)
  
@@ -51,7 +53,7 @@ typedef void (^ FRAlertArrayBlock)(NSInteger row);
 /**  日期选择器  */
 @property (nonatomic, strong, nullable) UIDatePicker *datePicker;
 
-
+#pragma mark - SelectArray
 /**
  数组选择
  
@@ -60,6 +62,14 @@ typedef void (^ FRAlertArrayBlock)(NSInteger row);
  */
 - (void)addSelectArray:(nonnull NSArray *)array configurationHandler:(nonnull FRAlertArrayBlock)configurationHandler;
 
+#pragma mark - PassWard
+/**
+ 支付密码
+
+ @param payMoney 付款金额
+ @param configurationHandler 支付密码回调
+ */
+- (void)addPassWardWithPayMoney:(nonnull NSString *)payMoney configurationHandler:(nonnull FRAlertPassWardBlock)configurationHandler;
 
 
 @end
