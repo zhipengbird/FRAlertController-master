@@ -410,7 +410,6 @@
     // 遍历在数组中的textField，添加到alert上
     NSInteger count = self.mutableTextFields.count;
     for (int n = 0; n < count; n++) {
-        NSLog(@"0000");
         
         UITextField *textField = self.mutableTextFields[n];
         if(!lastView) {
@@ -523,11 +522,9 @@
     if (distance < 10) {//需要移动textFiled的背景视图
         //需要移动键盘的距离
         CGFloat moveDistance = 10 - distance;
-        NSLog(@"%f",moveDistance);
         NSArray* constrains = self.view.constraints;
         
         for (NSLayoutConstraint* constraint in constrains) {
-            NSLog(@"%@",constraint.secondItem);
             if (constraint.firstItem == self.alertView){
                 if (constraint.firstAttribute == NSLayoutAttributeCenterY) {
                     constraint.constant = - moveDistance;
@@ -545,7 +542,6 @@
     NSArray* constrains = self.view.constraints;
     
     for (NSLayoutConstraint* constraint in constrains) {
-        NSLog(@"%@",constraint.secondItem);
         if (constraint.firstItem == self.alertView){
             if (constraint.firstAttribute == NSLayoutAttributeCenterY) {
                 constraint.constant = 0;
