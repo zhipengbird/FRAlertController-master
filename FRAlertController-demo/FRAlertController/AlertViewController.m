@@ -157,7 +157,7 @@
         }
             break;
         case 8: {
-            
+            /**
             FRAlertController *alertController = [FRAlertController alertControllerWithTitle:@"选择日期" message:nil preferredStyle:FRAlertControllerStyleAlert];
             
             [alertController addDatePickerWithColor:[self randomColor] style:FRAlertActionStyleBorder configurationHandler:^(UIDatePicker * _Nonnull datePicker) {
@@ -172,18 +172,36 @@
             //如需设置datePicker属性请调用alertController.datePicker进行设置
             
             [self presentViewController:alertController animated:YES completion:nil];
+             */
+            /**  建议使用  */
+            FRAlertController *alertController = [FRAlertController showAlertDatePickerController:self title:@"选择日期" message:nil preferredStyle:FRAlertControllerStyleAlert datePickerColor:[self randomColor] datePickerStyle:FRAlertActionStyleBorder configurationHandler:^(UIDatePicker * _Nonnull datePicker) {
+                NSDate *selected = [datePicker date];
+                NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+                [dateFormatter setDateFormat:@"yyyy-MM-dd"];
+                NSString *resultString = [dateFormatter stringFromDate:selected];
+                
+                NSLog(@"%@",resultString);
+            }];
+            //如需设置datePicker属性请调用alertController.datePicker进行设置
         }
             break;
         case 9: {
             
-            
-            FRAlertController *alertController = [FRAlertController alertControllerWithTitle:@"选择地区" message:nil preferredStyle:FRAlertControllerStyleAlert];
             NSArray *array = @[@"北京",@"上海",@"天津",@"广州",@"重庆",@"杭州",@"深圳",@"南京",@"郑州",@"武汉",@"长沙"];
+            /**
+            FRAlertController *alertController = [FRAlertController alertControllerWithTitle:@"选择地区" message:nil preferredStyle:FRAlertControllerStyleAlert];
             [alertController addSelectArray:array configurationHandler:^(NSInteger row) {
                 NSLog(@"%@",array[row]);
             }];
             
             [self presentViewController:alertController animated:YES completion:nil];
+            */
+            
+            /**  建议使用  */
+             [FRAlertController showAlertSelectArrayController:self title:@"选择地区" message:nil preferredStyle:FRAlertControllerStyleAlert selectArray:array configurationHandler:^(NSInteger row) {
+                 
+                 NSLog(@"%@",array[row]);
+             }];
         }
             break;
         case 10: {
@@ -228,12 +246,18 @@
         }
             break;
         case 11: {
-            
+            /**
             FRAlertController *alertController = [FRAlertController alertControllerWithTitle:@"请输入支付密码" message:@"2016潮流男装爆款促销" preferredStyle:FRAlertControllerStyleAlert];
             [alertController addPassWardWithPayMoney:@"1000" configurationHandler:^(NSString * _Nonnull passWord) {
                 NSLog(@"%@",passWord);
             }];
             [self presentViewController:alertController animated:YES completion:nil];
+             */
+            
+            /**  建议使用  */
+            [FRAlertController showAlertPassWardController:self title:@"请输入支付密码" message:@"2016潮流男装爆款促销" preferredStyle:FRAlertControllerStyleAlert payMoney:@"1000" configurationHandler:^(NSString * _Nonnull passWord) {
+                NSLog(@"%@",passWord);
+            }];
         }
             break;
         default:

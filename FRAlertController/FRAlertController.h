@@ -25,6 +25,15 @@ typedef void(^FRAlertPassWardBlock)(NSString *__nonnull passWord);
 
 @interface FRAlertController : UIViewController
 
+/**
+ 类方法展示日期选择器
+ 
+ @param title 标题
+ @param message 描述
+ @param preferredStyle alertController类型
+ 
+ @return alertController
+ */
 + (nonnull FRAlertController *)alertControllerWithTitle:(nullable NSString *)title message:(nullable NSString *)message preferredStyle:(FRAlertControllerStyle)preferredStyle;
 
 @property (nullable, nonatomic, copy) NSString *message;
@@ -43,9 +52,24 @@ typedef void(^FRAlertPassWardBlock)(NSString *__nonnull passWord);
 
 #pragma mark - DatePicker
 /**
+ 类方法展示日期选择器
+
+ @param controller 当前控制器
+ @param title 标题
+ @param message 描述
+ @param preferredStyle alertController类型
+ @param color 确定按钮颜色
+ @param style 确定按钮类型
+ @param configurationHandler 日期选择器回调
+ 
+ @return alertController
+ */
++ (nonnull FRAlertController *)showAlertDatePickerController:(nonnull UIViewController *)controller title:(nullable NSString *)title message:(nullable NSString *)message preferredStyle:(FRAlertControllerStyle)preferredStyle datePickerColor:(nullable UIColor *)color datePickerStyle:(FRAlertActionStyle)style configurationHandler:(nonnull FRAlertDatePickerBlock)configurationHandler;
+/**
  添加日期选择器(默认选中日期为今天  最小日期默认为1900/01/01  最大日期默认为当前日期)
  
  @param color 确定按钮颜色
+ @param style 确定按钮类型
  @param configurationHandler 日期选择器回调
  */
 - (void)addDatePickerWithColor:(nullable UIColor *)color style:(FRAlertActionStyle)style configurationHandler:(nonnull FRAlertDatePickerBlock)configurationHandler;
@@ -54,6 +78,21 @@ typedef void(^FRAlertPassWardBlock)(NSString *__nonnull passWord);
 @property (nonatomic, strong, nullable) UIDatePicker *datePicker;
 
 #pragma mark - SelectArray
+
+/**
+ 类方法展示数组选择器
+ 
+ @param controller 当前控制器
+ @param title 标题
+ @param message 描述
+ @param preferredStyle alertController类型
+ @param array 待选数组
+ @param configurationHandler 选中数组的序号
+ 
+ @return AlertController
+ */
++ (nonnull FRAlertController *)showAlertSelectArrayController:(nonnull UIViewController *)controller title:(nullable NSString *)title message:(nullable NSString *)message preferredStyle:(FRAlertControllerStyle)preferredStyle selectArray:(nonnull NSArray *)array configurationHandler:(nonnull FRAlertArrayBlock)configurationHandler;
+
 /**
  数组选择
  
@@ -63,6 +102,20 @@ typedef void(^FRAlertPassWardBlock)(NSString *__nonnull passWord);
 - (void)addSelectArray:(nonnull NSArray *)array configurationHandler:(nonnull FRAlertArrayBlock)configurationHandler;
 
 #pragma mark - PassWard
+/**
+ 类方法展示密码输入框
+ 
+ @param controller 当前控制器
+ @param title 标题
+ @param message 描述
+ @param preferredStyle alertController类型
+ @param payMoney 付款金额
+ @param configurationHandler 支付密码回调
+ 
+ @return AlertController
+ */
++ (nonnull FRAlertController *)showAlertPassWardController:(nonnull UIViewController *)controller title:(nullable NSString *)title message:(nullable NSString *)message preferredStyle:(FRAlertControllerStyle)preferredStyle payMoney:(nonnull NSString *)payMoney configurationHandler:(nonnull FRAlertPassWardBlock)configurationHandler;
+
 /**
  支付密码
 

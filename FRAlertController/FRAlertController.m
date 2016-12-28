@@ -428,13 +428,34 @@
 
 #pragma mark - AlertDatePicker
 /**  ----- 为alertController添加日期选择器（DatePicker） -----  */
++ (nonnull FRAlertController *)showAlertDatePickerController:(nonnull UIViewController *)controller title:(nullable NSString *)title message:(nullable NSString *)message preferredStyle:(FRAlertControllerStyle)preferredStyle datePickerColor:(nullable UIColor *)color datePickerStyle:(FRAlertActionStyle)style configurationHandler:(nonnull FRAlertDatePickerBlock)configurationHandler {
+    FRAlertController *alertController = [[FRAlertController alloc] init];
+    alertController.title = title;
+    alertController.message = message;
+    alertController.alertPreferredStyle = preferredStyle;
+    
+    if (preferredStyle == FRAlertControllerStyleActionSheet) {
+        //弹出动画
+        [alertController setModalTransitionStyle:UIModalTransitionStyleCoverVertical];
+    }else {
+        //弹出动画
+        [alertController setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
+    }
+    [alertController addDatePickerWithColor:color style:style configurationHandler:configurationHandler];
+    
+    [controller presentViewController:alertController animated:YES completion:nil];
+    
+    return alertController;
+}
+
+
 - (void)addDatePickerWithColor:(nullable UIColor *)color style:(FRAlertActionStyle)style configurationHandler:(nonnull FRAlertDatePickerBlock)configurationHandler {
     
     __weak typeof(self) weakSelf = self;
     FRAlertAction *cancleAction = [FRAlertAction actionWithTitle:@"取消" style:FRAlertActionStyleColor color:[UIColor redColor] handler:nil];
     
     FRAlertAction *makeSureAction = [FRAlertAction actionWithTitle:@"确定" style:style color:color handler:^(FRAlertAction * _Nonnull action) {
-        NSLog(@"%s",__func__);
+        
         if(weakSelf.alertDatePickerBlock) weakSelf.alertDatePickerBlock(self.datePicker);
     }];
     [self addAction:cancleAction];
@@ -462,6 +483,25 @@
 
 #pragma mark - AlertArray
 /**  ----- 为alertController添加数组选择器（SelectArray） -----  */
++ (nonnull FRAlertController *)showAlertSelectArrayController:(nonnull UIViewController *)controller title:(nullable NSString *)title message:(nullable NSString *)message preferredStyle:(FRAlertControllerStyle)preferredStyle selectArray:(nonnull NSArray *)array configurationHandler:(nonnull FRAlertArrayBlock)configurationHandler {
+    FRAlertController *alertController = [[FRAlertController alloc] init];
+    alertController.title = title;
+    alertController.message = message;
+    alertController.alertPreferredStyle = preferredStyle;
+    
+    if (preferredStyle == FRAlertControllerStyleActionSheet) {
+        //弹出动画
+        [alertController setModalTransitionStyle:UIModalTransitionStyleCoverVertical];
+    }else {
+        //弹出动画
+        [alertController setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
+    }
+    [alertController addSelectArray:array configurationHandler:configurationHandler];
+    
+    [controller presentViewController:alertController animated:YES completion:nil];
+    return alertController;
+}
+
 - (void)addSelectArray:(nonnull NSArray *)array configurationHandler:(nonnull FRAlertArrayBlock)configurationHandler {
     
     self.alertArray = array;
@@ -478,6 +518,25 @@
 
 #pragma mark - AlertPassWard
 /**  ----- 为alertController添加密码输入框（PassWard） -----  */
++ (nonnull FRAlertController *)showAlertPassWardController:(nonnull UIViewController *)controller title:(nullable NSString *)title message:(nullable NSString *)message preferredStyle:(FRAlertControllerStyle)preferredStyle payMoney:(nonnull NSString *)payMoney configurationHandler:(nonnull FRAlertPassWardBlock)configurationHandler {
+    FRAlertController *alertController = [[FRAlertController alloc] init];
+    alertController.title = title;
+    alertController.message = message;
+    alertController.alertPreferredStyle = preferredStyle;
+    
+    if (preferredStyle == FRAlertControllerStyleActionSheet) {
+        //弹出动画
+        [alertController setModalTransitionStyle:UIModalTransitionStyleCoverVertical];
+    }else {
+        //弹出动画
+        [alertController setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
+    }
+    [alertController addPassWardWithPayMoney:payMoney configurationHandler:configurationHandler];
+    
+    [controller presentViewController:alertController animated:YES completion:nil];
+    return alertController;
+}
+
 - (void)addPassWardWithPayMoney:(nonnull NSString *)payMoney configurationHandler:(nonnull FRAlertPassWardBlock)configurationHandler {
     
     self.payMoney = payMoney;
@@ -635,7 +694,6 @@
     }
     [self setDotWithCount:totalString.length];
     
-    NSLog(@"_____total %@",totalString);
     if (totalString.length == 6) {
         if (_passWardBlock) {
             self.passWardBlock(totalString);

@@ -139,12 +139,18 @@
         }
             break;
         case 5: {
-            
+            /**
             FRAlertController *alertController = [FRAlertController alertControllerWithTitle:@"请输入支付密码" message:@"2016潮流男装爆款促销" preferredStyle:FRAlertControllerStyleActionSheet];
             [alertController addPassWardWithPayMoney:@"1000" configurationHandler:^(NSString * _Nonnull passWord) {
                 NSLog(@"%@",passWord);
             }];
             [self presentViewController:alertController animated:YES completion:nil];
+            */
+            
+            /**  建议使用  */
+            [FRAlertController showAlertPassWardController:self title:@"请输入支付密码" message:@"2016潮流男装爆款促销" preferredStyle:FRAlertControllerStyleActionSheet payMoney:@"1000" configurationHandler:^(NSString * _Nonnull passWord) {
+                NSLog(@"%@",passWord);
+            }];
 
         }
             break;
