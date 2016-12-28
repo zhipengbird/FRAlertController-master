@@ -244,7 +244,11 @@
     if (actionBlock) {
         actionBlock(self.actions[sender.tag]);
     }
-    
+    if (self.textFields.count > 0) {
+        for (UITextField *textField in _mutableTextFields) {
+            [textField resignFirstResponder];
+        }
+    }
     // 点击button后自动dismiss
     [self dismissViewControllerAnimated:YES completion:nil];
 }
