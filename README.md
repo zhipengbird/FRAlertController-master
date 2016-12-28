@@ -1,7 +1,7 @@
 # FRAlertController-master
 模仿系统UIAlertController实现的一个FRAlertController
 
-![](https://github.com/fanrongQu/FRAlertController-master/blob/master/alert.gif)     ![](https://github.com/fanrongQu/FRAlertController-master/blob/master/ActionSheet.gif)  
+![](https://github.com/fanrongQu/FRAlertController-master/blob/master/alert.gif) \t    ![](https://github.com/fanrongQu/FRAlertController-master/blob/master/ActionSheet.gif)  
 
 
 ## FRAlertController
@@ -22,19 +22,19 @@
 
 @property (nonatomic, readonly) FRAlertControllerStyle preferredStyle;
 ```
-### 添加按钮
+1. 添加按钮
 ```Objective-C
 - (void)addAction:(nonnull FRAlertAction *)action;
 
 @property (nonatomic, readonly, nullable) NSArray<FRAlertAction *> *actions;
 ```
-### 添加TextFiled
+2. 添加TextFiled
 ```Objective-C
 - (void)addTextFieldConfigurationHandler:(nonnull FRAlertTextFieldBlock)configurationHandler;
 
 @property (nullable, nonatomic, readonly) NSArray<UITextField *> *textFields;
 ```
-### 日期选择器（仅支持Alert类型），建议使用类方法展示，一步实现效果
+3. 日期选择器（仅支持Alert类型），建议使用类方法展示，一步实现效果
 ```Objective-C
 /**
  类方法展示日期选择器
@@ -62,7 +62,7 @@
 /**  日期选择器  */
 @property (nonatomic, strong, nullable) UIDatePicker *datePicker;
 ```
-### 数组选择器（仅支持Alert类型），建议使用类方法展示，一步实现效果
+4. 数组选择器（仅支持Alert类型），建议使用类方法展示，一步实现效果
 ```Objective-C
 /**
  类方法展示数组选择器
@@ -87,7 +87,7 @@
 - (void)addSelectArray:(nonnull NSArray *)array configurationHandler:(nonnull FRAlertArrayBlock)configurationHandler;
 
 ```
-### 展示密码输入框（Alert类型仿微信支付、ActionSheet仿支付宝），建议使用类方法展示，一步实现效果
+5. 展示密码输入框（Alert类型仿微信支付、ActionSheet仿支付宝），建议使用类方法展示，一步实现效果
 ```Objective-C
 /**
  类方法展示密码输入框
