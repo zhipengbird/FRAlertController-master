@@ -140,6 +140,12 @@
             break;
         case 5: {
             
+            FRAlertController *alertController = [FRAlertController alertControllerWithTitle:@"请输入支付密码" message:@"2016潮流男装爆款促销" preferredStyle:FRAlertControllerStyleActionSheet];
+            [alertController addPassWardWithPayMoney:@"1000" configurationHandler:^(NSString * _Nonnull passWord) {
+                NSLog(@"%@",passWord);
+            }];
+            [self presentViewController:alertController animated:YES completion:nil];
+
         }
             break;
         case 6: {
@@ -170,7 +176,7 @@
 
 - (NSArray *)alertArray {
     if (!_alertArray) {
-        _alertArray = @[@"系统样式",@"带按钮的提醒",@"带按钮仅标题的提醒",@"带按钮仅描述的提醒",@"多选择的提醒"];
+        _alertArray = @[@"系统样式",@"带按钮的提醒",@"带按钮仅标题的提醒",@"带按钮仅描述的提醒",@"多选择的提醒",@"密码"];
     }
     return _alertArray;
 }

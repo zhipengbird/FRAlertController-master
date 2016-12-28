@@ -35,6 +35,19 @@
 @property (nonatomic, strong) NSMutableArray *mutableTextFields;
 
 
+/**  密码Textfield  */
+@property (nonatomic, strong) UITextField *pwdTextField;
+/**  付款金额  */
+@property (nonatomic, copy) NSString *payMoney;
+/**  付款金额  */
+@property (nonatomic, strong) UILabel *payMoneyLabel;
+/**  密码输入视图  */
+@property (nonatomic, strong) UIView *pwdInputView;
+/**  密码遮盖数组  */
+@property (nonatomic, strong) NSMutableArray *pwdIndicatorArray;
+
+
+
 @property (nonatomic, copy) FRAlertDatePickerBlock alertDatePickerBlock;
 
 @property (nonatomic, copy) FRAlertArrayBlock alertArrayBlock;
@@ -64,6 +77,17 @@
     if (_messageLabel != nil) _messageLabel = nil;
     if (_mutableActions != nil) _mutableActions = nil;
     if (_buttons != nil) _buttons = nil;
+    
+    if (_alertArray != nil) _alertArray = nil;
+    if (_closeBtn != nil) _closeBtn = nil;
+    if (_tableView != nil) _tableView = nil;
+    if (_mutableTextFields != nil) _mutableTextFields = nil;
+    
+    if (_pwdTextField!= nil) _pwdTextField = nil;
+    if (_payMoneyLabel != nil) _payMoneyLabel = nil;
+    if (_pwdInputView != nil) _pwdInputView = nil;
+    if (_pwdIndicatorArray != nil) _pwdIndicatorArray = nil;
+    
     if (_datePicker != nil) _datePicker = nil;
     if (_mutableTextFields != nil) _mutableTextFields = nil;
     if (_alertArray != nil) _alertArray = nil;
@@ -89,6 +113,16 @@
         [self.closeBtn addTarget:self action:@selector(closeDataPicker) forControlEvents:UIControlEventTouchUpInside];
     }else if (self.message.length > 0) self.messageLabel.text = self.message;
     
+    
+    if (_payMoney.length > 0) {//密码输入框
+        
+        self.payMoneyLabel.text = [NSString stringWithFormat:@"￥%@  ",_payMoney];
+        [self pwdInputView];
+        [self.pwdTextField becomeFirstResponder];
+        
+        [self.closeBtn addTarget:self action:@selector(closeDataPicker) forControlEvents:UIControlEventTouchUpInside];
+    }
+    
     if (_alertPreferredStyle == FRAlertControllerStyleActionSheet) {
        
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -107,15 +141,14 @@
     [super viewWillAppear:animated];
     
     //布局button
-    if (self.alertArray.count < 1) [self layoutViews];
-    
+    if (self.alertArray.count < 1||_payMoney.length > 0) [self layoutViews];
 }
 
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    if (!(self.buttons.count > 1 || self.alertArray.count > 0)) {
+    if (!(self.buttons.count > 1 || self.alertArray.count > 0 || self.payMoney)) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             
             [self dismissViewControllerAnimated:YES completion:nil];
@@ -141,7 +174,8 @@
     }
 }
 
-
+#pragma 创建alertController类方法
+/**  ----- 参考系统创建alertController -----  */
 + (nonnull FRAlertController *)alertControllerWithTitle:(nullable NSString *)title message:(nullable NSString *)message preferredStyle:(FRAlertControllerStyle)preferredStyle {
     FRAlertController *alertController = [[FRAlertController alloc] init];
     alertController.title = title;
@@ -157,7 +191,10 @@
     }
     return alertController;
 }
+/**  ----- 参考系统创建alertController -----  */
 
+#pragma mark - AlertAction
+/**  ----- 为alertController添加按钮（action） -----  */
 - (void)addAction:(nonnull FRAlertAction *)action {
     
     [self.mutableActions addObject:action];
@@ -197,90 +234,6 @@
     
     // 添加到父视图
     [self.alertView addSubview:actionButton];
-}
-
-- (void)addTextFieldConfigurationHandler:(nonnull FRAlertTextFieldBlock)configurationHandler {
-    
-    UITextField *textField = [[UITextField alloc] init];
-    textField.font = [UIFont systemFontOfSize:13];
-    UIView *leftView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 5, 10)];
-    [textField setLeftView:leftView];
-    textField.leftViewMode = UITextFieldViewModeAlways;
-    [textField setLayerWithCornerRadius:3.0 borderWidth:0.5 borderColor:[UIColor blackColor]];
-    textField.delegate = self;
-    //添加到mutableTextFields数组
-    [self.mutableTextFields addObject:textField];
-    
-    // 添加到父视图
-    [self.alertView addSubview:textField];
-    
-    //仅支持FRAlertControllerStyleAlert
-    self.alertPreferredStyle = FRAlertControllerStyleAlert;
-    //弹出动画
-    [self setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
-    
-    configurationHandler(textField);
-}
-
-/**
- 添加日期选择器
- 
- @param color 确定按钮颜色
- @param style 确定按钮样式
- @param configurationHandler 日期选择器回调
- */
-- (void)addDatePickerWithColor:(nullable UIColor *)color style:(FRAlertActionStyle)style configurationHandler:(nonnull FRAlertDatePickerBlock)configurationHandler {
-    
-    __weak typeof(self) weakSelf = self;
-    FRAlertAction *cancleAction = [FRAlertAction actionWithTitle:@"取消" style:FRAlertActionStyleColor color:[UIColor redColor] handler:nil];
-    
-    FRAlertAction *makeSureAction = [FRAlertAction actionWithTitle:@"确定" style:style color:color handler:^(FRAlertAction * _Nonnull action) {
-        NSLog(@"%s",__func__);
-        if(weakSelf.alertDatePickerBlock) weakSelf.alertDatePickerBlock(self.datePicker);
-    }];
-    [self addAction:cancleAction];
-    [self addAction:makeSureAction];
-
-//    /** 日期选择 -2209017600 = 1900/01/01 */
-//    if(!minimumDate) minimumDate = [NSDate dateWithTimeIntervalSince1970:-2209017600];
-//    if(!maximumDate) maximumDate = [NSDate date];
-//    [self.datePicker setMinimumDate:minimumDate];
-//    [self.datePicker setMaximumDate:maximumDate];
-//    if (defaultDate) [self.datePicker setDate:defaultDate animated:NO];
-    [self datePicker];
-    
-    //仅支持FRAlertControllerStyleAlert
-    self.alertPreferredStyle = FRAlertControllerStyleAlert;
-    //弹出动画
-    [self setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
-    
-    self.alertDatePickerBlock = configurationHandler;
-    configurationHandler(self.datePicker);
-}
-
-
-/**
- 数组选择
-
- @param array 待选数组
- @param configurationHandler 选中数组的序号
- */
-- (void)addSelectArray:(nonnull NSArray *)array configurationHandler:(nonnull FRAlertArrayBlock)configurationHandler {
-    
-    self.alertArray = array;
-    
-    //仅支持FRAlertControllerStyleAlert
-    self.alertPreferredStyle = FRAlertControllerStyleAlert;
-    //弹出动画
-    [self setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
-    
-    self.alertArrayBlock = configurationHandler;
-}
-
-
-- (void)addPassWardWithPayMoney:(nonnull NSString *)payMoney configurationHandler:(nonnull FRAlertPassWardBlock)configurationHandler {
-    
-    self.passWardBlock = configurationHandler;
 }
 
 /** 点击按钮事件 */
@@ -409,7 +362,32 @@
         lastView = button;
     }
 }
+/**  ----- 为alertController添加按钮（action） -----  */
 
+#pragma mark - AlertTextField
+/**  ----- 为alertController添加文本输入框（TextField） -----  */
+- (void)addTextFieldConfigurationHandler:(nonnull FRAlertTextFieldBlock)configurationHandler {
+    
+    UITextField *textField = [[UITextField alloc] init];
+    textField.font = [UIFont systemFontOfSize:13];
+    UIView *leftView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 5, 10)];
+    [textField setLeftView:leftView];
+    textField.leftViewMode = UITextFieldViewModeAlways;
+    [textField setLayerWithCornerRadius:3.0 borderWidth:0.5 borderColor:[UIColor blackColor]];
+    textField.delegate = self;
+    //添加到mutableTextFields数组
+    [self.mutableTextFields addObject:textField];
+    
+    // 添加到父视图
+    [self.alertView addSubview:textField];
+    
+    //仅支持FRAlertControllerStyleAlert
+    self.alertPreferredStyle = FRAlertControllerStyleAlert;
+    //弹出动画
+    [self setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
+    
+    configurationHandler(textField);
+}
 
 - (void)layoutTextField {
     // 记录最下面的一个view
@@ -444,6 +422,69 @@
         lastView = textField;
     }
 }
+/**  ----- 为alertController添加文本输入框（TextField） -----  */
+
+
+
+#pragma mark - AlertDatePicker
+/**  ----- 为alertController添加日期选择器（DatePicker） -----  */
+- (void)addDatePickerWithColor:(nullable UIColor *)color style:(FRAlertActionStyle)style configurationHandler:(nonnull FRAlertDatePickerBlock)configurationHandler {
+    
+    __weak typeof(self) weakSelf = self;
+    FRAlertAction *cancleAction = [FRAlertAction actionWithTitle:@"取消" style:FRAlertActionStyleColor color:[UIColor redColor] handler:nil];
+    
+    FRAlertAction *makeSureAction = [FRAlertAction actionWithTitle:@"确定" style:style color:color handler:^(FRAlertAction * _Nonnull action) {
+        NSLog(@"%s",__func__);
+        if(weakSelf.alertDatePickerBlock) weakSelf.alertDatePickerBlock(self.datePicker);
+    }];
+    [self addAction:cancleAction];
+    [self addAction:makeSureAction];
+
+//    /** 日期选择 -2209017600 = 1900/01/01 */
+//    if(!minimumDate) minimumDate = [NSDate dateWithTimeIntervalSince1970:-2209017600];
+//    if(!maximumDate) maximumDate = [NSDate date];
+//    [self.datePicker setMinimumDate:minimumDate];
+//    [self.datePicker setMaximumDate:maximumDate];
+//    if (defaultDate) [self.datePicker setDate:defaultDate animated:NO];
+    [self datePicker];
+    
+    //仅支持FRAlertControllerStyleAlert
+    self.alertPreferredStyle = FRAlertControllerStyleAlert;
+    //弹出动画
+    [self setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
+    
+    self.alertDatePickerBlock = configurationHandler;
+    configurationHandler(self.datePicker);
+}
+/**  ----- 为alertController添加日期选择器（DatePicker） -----  */
+
+
+
+#pragma mark - AlertArray
+/**  ----- 为alertController添加数组选择器（SelectArray） -----  */
+- (void)addSelectArray:(nonnull NSArray *)array configurationHandler:(nonnull FRAlertArrayBlock)configurationHandler {
+    
+    self.alertArray = array;
+    
+    //仅支持FRAlertControllerStyleAlert
+    self.alertPreferredStyle = FRAlertControllerStyleAlert;
+    //弹出动画
+    [self setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
+    
+    self.alertArrayBlock = configurationHandler;
+}
+/**  ----- 为alertController添加数组选择器（SelectArray） -----  */
+
+
+#pragma mark - AlertPassWard
+/**  ----- 为alertController添加密码输入框（PassWard） -----  */
+- (void)addPassWardWithPayMoney:(nonnull NSString *)payMoney configurationHandler:(nonnull FRAlertPassWardBlock)configurationHandler {
+    
+    self.payMoney = payMoney;
+    
+    self.passWardBlock = configurationHandler;
+}
+/**  ----- 为alertController添加密码输入框（PassWard） -----  */
 
 
 
@@ -465,7 +506,6 @@
 
 
 #pragma mark - tableView delegate
-
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
     
@@ -477,11 +517,13 @@
 }
 
 - (void)closeDataPicker {
+    if(_pwdTextField) [self.pwdTextField resignFirstResponder];
     
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 #pragma mark - textField delegate
+/**  ----- 为alertController添加文本输入框（TextField） -----  */
 - (void)textFieldDidBeginEditing:(UITextField *)textField {
     
     CGSize screenSize = [UIScreen mainScreen].bounds.size;
@@ -567,11 +609,66 @@
     
     return YES;
 }
+/**  ----- 为alertController添加文本输入框（TextField） -----  */
 
+
+/**  ----- 为alertController添加密码输入框（PassWard） -----  */
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
+    
+    if (![textField isEqual:self.pwdTextField]) return YES;
+    
+    if (textField.text.length >= 6 && string.length) {
+        //输入的字符个数大于6，则无法继续输入，返回NO表示禁止输入
+        return NO;
+    }
+    
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@",@"^[0-9]*$"];
+    if (![predicate evaluateWithObject:string]) {
+        return NO;
+    }
+    NSString *totalString;
+    if (string.length <= 0) {
+        totalString = [textField.text substringToIndex:textField.text.length-1];
+    }
+    else {
+        totalString = [NSString stringWithFormat:@"%@%@",textField.text,string];
+    }
+    [self setDotWithCount:totalString.length];
+    
+    NSLog(@"_____total %@",totalString);
+    if (totalString.length == 6) {
+        if (_passWardBlock) {
+            self.passWardBlock(totalString);
+        }
+        __weak typeof(self) weakSelf = self;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [textField resignFirstResponder];
+            [weakSelf dismissViewControllerAnimated:YES completion:nil];
+        });
+    }
+    
+    return YES;
+}
+
+- (void)setDotWithCount:(NSInteger)count {
+    for (UILabel *dot in _pwdIndicatorArray) {
+        dot.hidden = YES;
+    }
+    
+    for (int i = 0; i< count; i++) {
+        ((UILabel*)[_pwdIndicatorArray objectAtIndex:i]).hidden = NO;
+    }
+}
+/**  ----- 为alertController添加密码输入框（PassWard） -----  */
 
 
 
 #pragma mark - 数据处理
+- (FRAlertControllerStyle)preferredStyle {
+    return _alertPreferredStyle;
+}
+
+/**  ----- 为alertController添加按钮（action） -----  */
 - (NSMutableArray *)mutableActions {
     if (!_mutableActions) {
         _mutableActions = [[NSMutableArray alloc]init];
@@ -586,6 +683,14 @@
     return _buttons;
 }
 
+- (NSArray<FRAlertAction *> *)actions {
+    
+    return _mutableActions;
+}
+/**  ----- 为alertController添加按钮（action） -----  */
+
+
+/**  ----- 为alertController添加文本输入框（TextField） -----  */
 - (NSMutableArray *)mutableTextFields {
     if (!_mutableTextFields) {
         _mutableTextFields = [[NSMutableArray alloc]init];
@@ -593,19 +698,22 @@
     return _mutableTextFields;
 }
 
-- (NSArray<FRAlertAction *> *)actions {
-    
-    return _mutableActions;
-}
-
-- (FRAlertControllerStyle)preferredStyle {
-    return _alertPreferredStyle;
-}
-
 
 - (NSArray<UITextField *> *)textFields {
     return _mutableTextFields;
 }
+/**  ----- 为alertController添加文本输入框（TextField） -----  */
+
+
+/**  ----- 为alertController添加密码输入框（PassWard） -----  */
+- (NSMutableArray *)pwdIndicatorArray {
+    if (!_pwdIndicatorArray) {
+        _pwdIndicatorArray = [[NSMutableArray alloc]init];
+    }
+    return _pwdIndicatorArray;
+}
+/**  ----- 为alertController添加密码输入框（PassWard） -----  */
+
 
 #pragma mark - 视图懒加载
 - (UIView *)alertView {
@@ -615,18 +723,32 @@
         if (_alertPreferredStyle == FRAlertControllerStyleActionSheet) {
             //创建距底部的约束
             [_alertView setAutoLayoutBottomToViewBottom:self.view constant:-10];
+            if(self.payMoney) {
+                //创建距左边的约束
+                [_alertView setAutoLayoutLeftToViewLeft:self.view constant:0];
+                //创建距右边的约束
+                [_alertView setAutoLayoutRightToViewRight:self.view constant:0];
+            }else {
+                //创建距左边的约束
+                [_alertView setAutoLayoutLeftToViewLeft:self.view constant:20];
+                //创建距右边的约束
+                [_alertView setAutoLayoutRightToViewRight:self.view constant:-20];
+                [_alertView setLayerWithCornerRadius:5.0];
+            }
+            
         }else {
+            
             //创建距中的约束
             [_alertView setAutoLayoutCenterToViewCenter:self.view];
+            if(self.payMoney) [_alertView setAutoLayoutCenterYToViewCenterY:self.view constant:-60];
+            
+            [_alertView setAutoLayoutWidth:280];
+            
+            [_alertView setLayerWithCornerRadius:5.0];
         }
-        //创建距左边的约束
-        [_alertView setAutoLayoutLeftToViewLeft:self.view constant:20];
-        //创建距右边的约束
-        [_alertView setAutoLayoutRightToViewRight:self.view constant:-20];
         
         _alertView.backgroundColor = [UIColor whiteColor];
-        [_alertView setLayerWithCornerRadius:5.0];
-//        _alertView.alpha = 0.9;
+        _alertView.alpha = 0.95;
     }
     return _alertView;
 }
@@ -638,7 +760,7 @@
         [_titleLabel setAutoLayoutTopToViewTop:self.alertView constant:12];
         [_titleLabel setAutoLayoutLeftToViewLeft:self.alertView constant:15];
         [_titleLabel setAutoLayoutRightToViewRight:self.alertView constant:-15];
-        if (self.buttons.count < 1 && !self.message && self.alertArray.count < 1 && self.mutableTextFields.count < 1) {
+        if (self.buttons.count < 1 && !self.message && self.alertArray.count < 1 && self.mutableTextFields.count < 1 && !self.payMoney) {
             [_titleLabel setAutoLayoutBottomToViewBottom:self.alertView constant:-12];
         }
         
@@ -663,7 +785,7 @@
         [_messageLabel setAutoLayoutLeftToViewLeft:self.alertView constant:15];
         [_messageLabel setAutoLayoutRightToViewRight:self.alertView constant:-15];
         
-        if (self.buttons.count < 1 && self.alertArray.count < 1 && self.mutableTextFields.count < 1) {
+        if (self.buttons.count < 1 && self.alertArray.count < 1 && self.mutableTextFields.count < 1 && !self.payMoney) {
             [_messageLabel setAutoLayoutBottomToViewBottom:self.alertView constant:-12];
         }
         _messageLabel.font = [UIFont systemFontOfSize:14];
@@ -675,6 +797,7 @@
 }
 
 
+/**  ----- 为alertController添加日期选择器（DatePicker） -----  */
 - (UIDatePicker *)datePicker {
     if (!_datePicker) {
         _datePicker = [[UIDatePicker alloc] init];
@@ -697,8 +820,10 @@
     }
     return _datePicker;
 }
+/**  ----- 为alertController添加日期选择器（DatePicker） -----  */
 
 
+/**  ----- 为alertController添加数组选择器（SelectArray） -----  */
 - (UIButton *)closeBtn {
     if (!_closeBtn) {
         _closeBtn = [[UIButton alloc]init];
@@ -734,6 +859,89 @@
     }
     return _tableView;
 }
+/**  ----- 为alertController添加数组选择器（SelectArray） -----  */
+
+/**  ----- 为alertController添加密码输入框（PassWard） -----  */
+- (UILabel *)payMoneyLabel {
+    if (!_payMoneyLabel) {
+        _payMoneyLabel = [[UILabel alloc]init];
+        [self.alertView addSubview:_payMoneyLabel];
+        
+        if (self.message) {
+            [_payMoneyLabel setAutoLayoutTopToViewBottom:self.messageLabel constant:8];
+        }else if (self.title) {
+            [_payMoneyLabel setAutoLayoutTopToViewBottom:self.titleLabel constant:8];
+        }else {
+            [_payMoneyLabel setAutoLayoutTopToViewBottom:self.alertView constant:8];
+        }
+        [_payMoneyLabel setAutoLayoutLeftToViewLeft:self.alertView constant:0];
+        [_payMoneyLabel setAutoLayoutRightToViewRight:self.alertView constant:0];
+        _payMoneyLabel.font = [UIFont systemFontOfSize:36];
+        _payMoneyLabel.textAlignment = NSTextAlignmentCenter;
+    }
+    return _payMoneyLabel;
+}
+
+
+- (UIView *)pwdInputView {
+    if (!_pwdInputView) {
+        _pwdInputView = [[UIView alloc]init];
+        [self.alertView addSubview:_pwdInputView];
+        [_pwdInputView setAutoLayoutTopToViewBottom:self.payMoneyLabel constant:10];
+        [_pwdInputView setAutoLayoutCenterXToViewCenterX:self.alertView constant:0];
+        
+        
+        CGFloat height = 40;
+        CGFloat width = height;
+        if (_alertPreferredStyle == FRAlertControllerStyleActionSheet) {
+            [_pwdInputView setAutoLayoutBottomToViewBottom:self.alertView constant:-260];
+            
+            CGSize screenSize = [UIScreen mainScreen].bounds.size;
+            width = (screenSize.width - 80)/6;
+        }else {
+            [_pwdInputView setAutoLayoutBottomToViewBottom:self.alertView constant:-20];
+        }
+        [_pwdInputView setAutoLayoutWidth:width * 6];
+        [_pwdInputView setAutoLayoutHeight:height];
+        _pwdInputView.backgroundColor = [UIColor whiteColor];
+        [_pwdInputView setLayerWithCornerRadius:3.0 borderWidth:0.5 borderColor:[UIColor blackColor]];
+        
+        CGFloat dotW = height - 20;
+        for (int i = 0; i < 6; i ++) {
+            UIView *dot = [[UIView alloc]initWithFrame:CGRectMake((width-dotW)/2.f + i*width, (height-dotW)/2.f, dotW, dotW)];
+            dot.backgroundColor = [UIColor blackColor];
+            dot.layer.cornerRadius = dotW/2;
+            dot.clipsToBounds = YES;
+            dot.hidden = YES;
+            [_pwdInputView addSubview:dot];
+            [self.pwdIndicatorArray addObject:dot];
+            
+            if (i == 6-1) {
+                continue;
+            }
+            UILabel *line = [[UILabel alloc]initWithFrame:CGRectMake((i+1)*width, 0, 0.5f, height)];
+            line.backgroundColor = [UIColor blackColor];
+            [_pwdInputView addSubview:line];
+        }
+
+    }
+    return _pwdInputView;
+}
+
+
+- (UITextField *)pwdTextField {
+    if (!_pwdTextField) {
+        _pwdTextField = [[UITextField alloc]init];
+        _pwdTextField.hidden = YES;
+        _pwdTextField.delegate = self;
+        _pwdTextField.keyboardType = UIKeyboardTypeNumberPad;
+        [self.pwdInputView addSubview:_pwdTextField];
+    }
+    return _pwdTextField;
+}
+/**  ----- 为alertController添加密码输入框（PassWard） -----  */
+
+
 
 
 @end
