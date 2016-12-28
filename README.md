@@ -22,19 +22,19 @@ Alert![](https://github.com/fanrongQu/FRAlertController-master/blob/master/alert
 
 @property (nonatomic, readonly) FRAlertControllerStyle preferredStyle;
 ```
-1. 添加按钮
+##### 添加按钮
 ```Objective-C
 - (void)addAction:(nonnull FRAlertAction *)action;
 
 @property (nonatomic, readonly, nullable) NSArray<FRAlertAction *> *actions;
 ```
-2. 添加TextFiled
+##### 添加TextFiled
 ```Objective-C
 - (void)addTextFieldConfigurationHandler:(nonnull FRAlertTextFieldBlock)configurationHandler;
 
 @property (nullable, nonatomic, readonly) NSArray<UITextField *> *textFields;
 ```
-3. 日期选择器（仅支持Alert类型），建议使用类方法展示，一步实现效果
+##### 日期选择器（仅支持Alert类型），建议使用类方法展示，一步实现效果
 ```Objective-C
 /**
  类方法展示日期选择器
@@ -62,7 +62,7 @@ Alert![](https://github.com/fanrongQu/FRAlertController-master/blob/master/alert
 /**  日期选择器  */
 @property (nonatomic, strong, nullable) UIDatePicker *datePicker;
 ```
-4. 数组选择器（仅支持Alert类型），建议使用类方法展示，一步实现效果
+##### 数组选择器（仅支持Alert类型），建议使用类方法展示，一步实现效果
 ```Objective-C
 /**
  类方法展示数组选择器
@@ -87,7 +87,7 @@ Alert![](https://github.com/fanrongQu/FRAlertController-master/blob/master/alert
 - (void)addSelectArray:(nonnull NSArray *)array configurationHandler:(nonnull FRAlertArrayBlock)configurationHandler;
 
 ```
-5. 展示密码输入框（Alert类型仿微信支付、ActionSheet仿支付宝），建议使用类方法展示，一步实现效果
+##### 展示密码输入框（Alert类型仿微信支付、ActionSheet仿支付宝），建议使用类方法展示，一步实现效果
 ```Objective-C
 /**
  类方法展示密码输入框
